@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6">
+   <div class="titlee center max-w-xl mx-auto">
+       <h2 class="text-3xl mb-4 text-center">Agregador de noticias</h2>
+   </div>
+
+   <div class="grid grid-cols-2 col-span-2 grid-rows-4">
+
+       {% for noticia in data %}
+        <div class="grid m-2 elemento-noticia">
+            <div class="relative flex items-center space-x-3 rounded-lg border border-gray-300 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400">
+                <div class="min-w-0 flex-1">
+                    <a href="{{ noticia.url_noticia }}" class="focus:outline-none">
+                    <span class="absolute inset-0" aria-hidden="true"></span>
+                    <h3 class="text-sm font-medium">{{ noticia["noticia_encabezado"] }}</h3>
+                    <p class="truncate text-sm text-gray-500 diario_marca">{{ noticia["diario_marca"] }}</p>
+                    </a>
+                </div>
+            </div>
+    
+    
+        </div>
+        {% endfor %}
+   </div>
+
+   <script>
+    const diario_marca = document.querySelectorAll(".diario_marca")
+    const elemento_noticia = document.querySelectorAll(".elemento-noticia")
+
+    
+
+   </script>
+
+
+    <!-- <div class="flex items-center justify-center w-full">
+
+
+        <div class="max-w-xl">
+            {% for noticia in data %}
+                <div>
+                    <ul role="list" class="divide-y divide-gray-200">
+                    <li class="p-3 mb-4 py-4 bg-amber-300 shadow rounded-lg">
+                        <div class="flex space-x-3">
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <a href="{{ noticia.url_noticia }}" class="hover:underline" target="_blank">
+                                    <h3 class="text-sm font-medium">{{ noticia["noticia_encabezado"] }}</h3>
+                                </a>
+                            </div>
+                            <p class="text-sm text-gray-500">{{ noticia["diario_marca"] }}</p>
+                        </div>
+                        </div>
+                    </li>
+                
+                   
+                    </ul>
+                </div>
+        
+            {% endfor %}
+    
+    
+    
+        </div>
+    </div> -->
+
+    
+
+</body>
+</html>
