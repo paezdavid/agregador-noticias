@@ -2,11 +2,9 @@ from flask import request
 from flask import Flask, render_template, redirect, url_for
 import requests
 from bs4 import BeautifulSoup
-import random
+import json
 
 app = Flask(__name__)
-
-
 
 @app.get("/")
 def index():
@@ -15,9 +13,12 @@ def index():
 
 def get_data():
 
-    list_of_data = []
+    dict_of_data = {
+        "prensa_py": [],
+        "prensa_inter": []
+    }
 
-    url_list = ["https://www.ultimahora.com", "https://www.abc.com.py", "https://npy.com.py", "https://www.lanacion.com.py"]
+    url_list = ["https://www.ultimahora.com", "https://elpais.com/america", "https://cnnespanol.cnn.com", "https://www.abc.com.py", "https://npy.com.py", "https://www.lanacion.com.py", "https://www.bbc.com/mundo"]
 
 
     for url in url_list:
@@ -27,71 +28,119 @@ def get_data():
         if url == "https://npy.com.py":
             # NPY
             npy_results = soup.find_all("div", "meta-info-inner")
-            print("NPY")
-            for element in npy_results:
-                print(element.a["href"]) # link de la noticia
-                print(element.h3.text) # encabezado de la noticia
-                list_of_data.append({
-                    "diario_marca": "NPY", 
-                    "url_noticia": element.a["href"], 
-                    "noticia_encabezado": element.h3.text
-                })
-                print("\n")
+            counter_npy = 0
 
+            for element in npy_results:
+                if counter_npy < 5:
+                    dict_of_data["prensa_py"].append({
+                        "diario_marca": "NPY", 
+                        "url_noticia": element.a["href"], 
+                        "noticia_encabezado": element.h3.text
+                    })
+                else:
+                    break
+
+                counter_npy += 1
 
         elif url == "https://www.lanacion.com.py":
-            # LA NACION
-            print("LA NACION")
+            counter_ln = 0
 
             for parentElement in soup.find_all(id="ph-dp"):
                 childElement = parentElement.find_all('div', class_="tc")
-                # print(element.text) # encabezado de la noticia
+                
                 for noticia in childElement:
-                    print(noticia.a["href"])
-                    print(noticia.h3.text)
-                    list_of_data.append({
-                        "diario_marca": "La Nación", 
-                        "url_noticia": noticia.a["href"] if "https" in noticia.a["href"] else "https://www.lanacion.com.py" + noticia.a["href"], 
-                        "noticia_encabezado": noticia.h3.text
-                    })
-                    print("\n")
+                    if counter_ln < 5:
+                        dict_of_data["prensa_py"].append({
+                            "diario_marca": "La Nación", 
+                            "url_noticia": noticia.a["href"] if "https" in noticia.a["href"] else "https://www.lanacion.com.py" + noticia.a["href"], 
+                            "noticia_encabezado": noticia.h3.text
+                        })
+                    else:
+                        break
 
+                    counter_ln += 1
 
         elif url == "https://www.abc.com.py":
-            print("ABC")
+            counter_abc = 0
 
             for parentElementABC in soup.find_all("div", class_="section-featurednews"):
                 childElementABC = parentElementABC.find_all('div', "article-info")
                 
                 for noticiaABC in childElementABC:
-                    print(noticiaABC.a["href"])
-                    print(noticiaABC.find("div", class_="article-title").text)
-                    print("\n")
-                
-                    list_of_data.append({
-                        "diario_marca": "ABC Color", 
-                        "url_noticia": "https://www.abc.com.py" + noticiaABC.a["href"], 
-                        "noticia_encabezado":  noticiaABC.find("div", class_="article-title").text 
-                    })
-        
+                    if counter_abc < 5:
+                        dict_of_data["prensa_py"].append({
+                            "diario_marca": "ABC Color", 
+                            "url_noticia": "https://www.abc.com.py" + noticiaABC.a["href"], 
+                            "noticia_encabezado":  noticiaABC.find("div", class_="article-title").text
+                        })
+                    else:
+                        break
 
+                    counter_abc += 1
+        
         elif url == "https://www.ultimahora.com":
-            print("ULTIMA HORA")
+            counter_uh = 0
 
             for parentElementUH in soup.find_all("div", class_="articles-3-col"):
                 childElementUH = parentElementUH.find_all('h2', "article-title")
                 
                 for noticiaUH in childElementUH:
-                    print(noticiaUH.a["href"])
-                    print(noticiaUH.text)
-                    print("\n")
-                
-                    list_of_data.append({
-                        "diario_marca": "Última Hora", 
-                        "url_noticia": noticiaUH.a["href"], 
-                        "noticia_encabezado":  noticiaUH.text 
+                    if counter_uh < 5:
+                        dict_of_data["prensa_py"].append({
+                            "diario_marca": "Última Hora", 
+                            "url_noticia": noticiaUH.a["href"], 
+                            "noticia_encabezado":  noticiaUH.text
+                        })
+                    else:
+                        break
+                    counter_uh += 1
+        
+        elif url == "https://www.bbc.com/mundo":
+            counter_bbc = 0
+            for noticia_bbc in soup.find_all("a", class_="bbc-1fxtbkn ecljyjm0"):
+
+                if counter_bbc < 5:
+                    dict_of_data["prensa_inter"].append({
+                        "diario_marca": "BBC Mundo", 
+                        "url_noticia": "https://www.bbc.com" + noticia_bbc["href"], 
+                        "noticia_encabezado":  noticia_bbc.text
                     })
+                else:
+                    break
+                    
+                counter_bbc += 1
            
-    return list_of_data
+        elif url == "https://cnnespanol.cnn.com":
+            counter_cnn = 0
+            for noticia_cnn in soup.find_all("h2", class_="news__title"):
+                if counter_cnn < 5:
+                    dict_of_data["prensa_inter"].append({
+                        "diario_marca": "CNN en Español", 
+                        "url_noticia": noticia_cnn.a["href"], 
+                        "noticia_encabezado":  noticia_cnn.text
+                    })
+                else:
+                    break
+
+                counter_cnn += 1
+
+        elif url == "https://elpais.com/america":
+            counter_pais = 0
+
+            for main_section_pais in soup.find_all("section", class_="_g _g-md _g-o b b-d"):
+                for noticia_pais in main_section_pais.find_all("h2", class_="c_t"):
+                    if counter_pais < 5:
+                        dict_of_data["prensa_inter"].append({
+                            "diario_marca": "El País", 
+                            "url_noticia": "https://elpais.com" + noticia_pais.a["href"], 
+                            "noticia_encabezado":  noticia_pais.text
+                        })
+                    else:
+                        break
+
+                    counter_pais += 1
+
+
+    return dict_of_data
                 
         
