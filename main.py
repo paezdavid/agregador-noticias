@@ -2,7 +2,6 @@ from flask import request
 from flask import Flask, render_template, redirect, url_for
 import requests
 from bs4 import BeautifulSoup
-import json
 
 app = Flask(__name__)
 
@@ -13,6 +12,7 @@ def index():
 
 def get_data():
 
+    # All data (the news) to be sent to the client is stored in this dictionary
     dict_of_data = {
         "prensa_py": [],
         "prensa_inter": []
@@ -26,9 +26,8 @@ def get_data():
         soup = BeautifulSoup(page.content, "html.parser")
 
         if url == "https://npy.com.py":
-            # NPY
             npy_results = soup.find_all("div", "meta-info-inner")
-            counter_npy = 0
+            counter_npy = 0 # A counter is needed to limit the amount of results sent to the client. A counter variable will be used for all news sites.
 
             for element in npy_results:
                 if counter_npy < 5:
