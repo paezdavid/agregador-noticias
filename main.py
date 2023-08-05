@@ -80,8 +80,8 @@ def get_data():
         elif url == "https://www.ultimahora.com":
             counter_uh = 0
 
-            for parentElementUH in soup.find_all("div", class_="articles-3-col"):
-                childElementUH = parentElementUH.find_all('h2', "article-title")
+            for parentElementUH in soup.find_all("div", class_="PageList-items-item"):
+                childElementUH = parentElementUH.find_all('div', "PagePromo-title")
                 
                 for noticiaUH in childElementUH:
                     if counter_uh < 5:
